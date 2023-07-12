@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,4 +20,16 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+// Route::get('/home', 'HomeController@index')->name('home');
+
+// add product
+Route::resource('/products', 'ProductController');
+
+// add attributes
+Route::resource('/attributes', 'AttributeController');
+// add options
+Route::get('attributes/{attributeID}/add-option', 'AttributeController@add_option');
+Route::post('attributes/options/{attributeID}', 'AttributeController@store_option');
+Route::get('attributes/options/{optionID}/edit', 'AttributeController@edit_option');
+Route::put('attributes/options/{optionID}', 'AttributeController@update_option');
+Route::delete('attributes/options/{optionID}', 'AttributeController@remove_option');
