@@ -45,9 +45,9 @@ class AttributeController extends Controller
         ];
     
         $validator = Validator::make($request->all(), [
-            'code' => 'required|unique:attributes',
-            'name' => 'required|unique:attributes',
-        ]);
+            'code' => 'required|unique:attributes,code,'.$request->id,
+            'name' => 'required|unique:attributes,name,'.$request->id,
+        ]);        
     
         if ($validator->fails()) {
             return redirect()->back()
@@ -92,19 +92,24 @@ class AttributeController extends Controller
     public function update(Request $request, $id)
     {
         $data = [
-            'id' => $request->id,
             'code' => $request->code,
             'name' => $request->name,
         ];
 
         $validator = Validator::make($request->all(), [
-            'code' => 'required|unique:attributes',
-            'name' => 'required|unique:attributes',
+            'code' => 'required|unique:attributes,code,' . $id,
+            'name' => 'required|unique:attributes,name,' . $id,
         ]);
-        
-        Attribute::where('id', $data['id'])->update($validator->validated());
-        
-        return redirect('/attributes')->with('success','Data berhasil diubah');
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        Attribute::where('id', $id)->update($data);
+
+        return redirect('/attributes')->with('success', 'Data berhasil diubah');
     }
 
     /**

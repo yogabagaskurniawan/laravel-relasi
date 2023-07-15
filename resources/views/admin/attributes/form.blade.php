@@ -17,7 +17,7 @@
       </div>
       <div class="card-body">
         @if (!empty($attribute))
-        <form method="POST" action="{{ url('/attributes', $attribute->id) }}">
+        <form method="POST" action="{{ url('attributes', $attribute->id) }}">
           @method('PUT')
           @csrf
           <input type="hidden" name="id" value="{{ $attribute->id }}">
@@ -31,7 +31,7 @@
                 <legend class="col-form-label pt-0">General</legend>
                 <div class="form-group">
                   <label for="code">Code</label>
-                  <input type="text" name="code" class="form-control @error('code') is-invalid @enderror" value="{{ old('code', $attribute->code ?? '') }}" >
+                  <input type="text" name="code" class="form-control @error('code') is-invalid @enderror" value="{{ !empty($attribute) ? $attribute->code : '' }}" >
                   @error('code')
                   <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>
@@ -40,7 +40,7 @@
                 </div>
                 <div class="form-group">
                   <label for="name">Name</label>
-                  <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ old('name', $attribute->name ?? '') }}">
+                  <input type="text" name="name" class="form-control @error('name') is-invalid @enderror" value="{{ !empty($attribute) ? $attribute->name : '' }}">
                   @error('name')
                   <span class="invalid-feedback" role="alert">
                     <strong>{{ $message }}</strong>

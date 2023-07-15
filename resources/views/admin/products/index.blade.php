@@ -1,72 +1,63 @@
-{{-- @extends('layouts.app')
-
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection --}}
-
 @extends('admin.layoutAdmin.main')
 
 @section('content')
-      @if (session('success'))
-        <div class="alert alert-success" role="alert">
-            {{ session('success') }}
+  <div class="row">
+    <div class="col-lg-12">
+      <div class="card card-default">
+        <div class="card-header card-header-border-bottom">
+          <h2>Products</h2>
         </div>
-      @endif
-    <h4>Ini Products</h4>
-    {{-- <div class="row d-flex justify-content-center mt-5">
-      <div class="col-lg-7 col-12 layout-spacing">
-        <div class="statbox widget box box-shadow">
-          <div class="widget-header">
-              <div class="row">
-                  <div class="col-md-12 mb-4">
-                      <h4>Update Content</h4>
-                  </div>
-              </div>
-          </div>
-          @foreach ($homepage as $page)
-          <form method="POST" action="{{ '/update-homepage' }}">
-            @csrf
-            <input type="hidden" name="id" value="{{$page->id}}"> 
-            <div class="form-group mb-4">
-              <label for="exampleFormControlInput2">Nama Logo Navbar</label>
-              <input type="text" class="form-control @error('navbarNama') is-invalid @enderror" name="navbarNama" id="navbarNama" required value="{{ $page->navbarNama }}">
-              @error('navbarNama')
-              <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-              </span>
-              @enderror
+        <div class="card-body">
+          @if (session('success'))
+            <div class="alert alert-success" role="alert">
+              {{ session('success') }}
             </div>
-            <div class="form-group">
-              <label for="textContent">Text Content</label>
-              <textarea class="form-control @error('textContent') is-invalid @enderror" name="textContent" id="textContent" rows="5">{{ $page->textContent }}</textarea>
-              @error('textContent')
-              <span class="invalid-feedback" role="alert">
-                <strong>{{ $message }}</strong>
-              </span>
-              @enderror
-            </div>
-            <button type="submit" class="btn btn-primary">Ubah</button>
-          </form>
-          @endforeach
+          @endif
+          <table class="table table-bordered table-stripped">
+            <thead>
+                <th>#</th>
+                <th>SKU</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Stok</th>
+                <th style="width:15%">Action</th>
+            </thead>
+            <tbody>
+                @foreach ($products as $product)
+                    <tr>    
+                        <td>{{ $product->id }}</td>
+                        <td>{{ $product->sku }}</td>
+                        <td>{{ $product->name }}</td>
+                        {{-- <td>{{ $product->price }}</td> --}}
+                        <td>{{ number_format($product->price) }}</td>
+                        <td>{{ $product->productInventory ? $product->productInventory->stok : '-' }}</td>
+                        <td>
+                            <a href="{{ url('products/'. $product->id .'/edit') }}" class="btn btn-warning btn-sm">edit</a>
+                            <a href="{{ url('products/' . $product->id) }}" class="delete" style="display:inline-block"
+                              onclick="event.preventDefault(); if (confirm('Are you sure you want to remove this item?')) { document.getElementById('delete-form-{{ $product->id }}').submit(); }">
+                              <button type="button" class="btn btn-danger btn-sm">Remove</button>
+                            </a>
+                            <form id="delete-form-{{ $product->id }}" action="{{ url('products/' . $product->id) }}" method="POST" style="display: none;">
+                                @method('DELETE')
+                                @csrf
+                            </form>                                                   
+                          </td>
+                    </tr>
+                @endforeach
+                @if ($products->isEmpty())
+                  <tr>
+                      <td colspan="6">No records found</td>
+                      <td></td>
+                  </tr>
+                @endif
+            </tbody>
+          </table>
+          {{ $products->links() }}
+        </div>
+        <div class="card-footer text-right">
+          <a href="{{ url('products/create') }}" class="btn btn-primary">Add New</a>
         </div>
       </div>
-    </div> --}}
+    </div>
+  </div>
 @endsection
