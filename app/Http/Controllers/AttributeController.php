@@ -121,6 +121,7 @@ class AttributeController extends Controller
     public function destroy($id)
     {
         Attribute::where('id',$id)->delete();
+        AttributeOption::where('attribute_id',$id)->delete();
 
         return back()->with('success','Data berhasil dihapus');
     }

@@ -9,6 +9,7 @@ use App\ProductInventory;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\ProductAttributeValue;
+use App\ProductImage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use League\CommonMark\Extension\Attributes\Node\Attributes;
@@ -133,8 +134,10 @@ class ProductController extends Controller
                     'name' => $product->name . $this->convertVariantAsName($variant),
                 ];
                 // dd($variantParams);
-                $variantParams['slug'] = Str::slug($variantParams['name']);
                 $newProductVariant = Product::create($variantParams);
+                // Setelah menciptakan produk variasi baru, perbarui slug-nya
+                $newProductVariant->slug = Str::slug($newProductVariant->name);
+                $newProductVariant->save();
                 $this->saveProductAttributeValues($newProductVariant, $variant);
             }
         }
@@ -194,10 +197,16 @@ class ProductController extends Controller
         }
 
         $data = [
-            'slug' => Str::slug($request->name)
+            // 'slug' => Str::slug($request->name)
         ];
 
         $product->fill($request->all());
+        // Ambil nama baru dari permintaan
+        $newName = $request->name;
+        // Hasilkan slug baru dari nama baru
+        $newSlug = Str::slug($newName);
+        // Perbarui nilai slug pada model produk
+        $product->slug = $newSlug;
         $product->save();
 
         // dd($request->variants);
@@ -235,6 +244,9 @@ class ProductController extends Controller
     public function destroy($id)
     {
         Product::where('id',$id)->delete();
+        ProductInventory::where('product_id',$id)->delete();
+        ProductAttributeValue::where('product_id',$id)->delete();
+        ProductImage::where('product_id',$id)->delete();
 
         return back()->with('success','Data berhasil dihapus');
     }

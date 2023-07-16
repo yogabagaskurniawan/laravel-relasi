@@ -19,7 +19,7 @@ class CreateProductsTable extends Migration
             $table->integer('user_id');
             $table->string('sku');
             $table->string('name');
-            $table->string('slug');
+            $table->string('slug')->default('');
             $table->decimal('price', 15, 2)->nullable();
             $table->decimal('weight', 10, 2)->nullable();
             $table->text('description')->nullable();

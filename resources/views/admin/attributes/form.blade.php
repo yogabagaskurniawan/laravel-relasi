@@ -17,7 +17,7 @@
       </div>
       <div class="card-body">
         @if (!empty($attribute))
-        <form method="POST" action="{{ url('attributes', $attribute->id) }}">
+        <form method="POST" action="{{ url('attributes/', $attribute->id) }}">
           @method('PUT')
           @csrf
           <input type="hidden" name="id" value="{{ $attribute->id }}">
