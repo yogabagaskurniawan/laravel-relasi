@@ -62,7 +62,6 @@
           @endif                       
   
           @if ($product)
-            {{-- @include('admin.products.configurable') --}}
             @if ($product->parent_id == NULL)
               @include('admin.products.configurable')
             @else

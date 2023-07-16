@@ -30,7 +30,7 @@
                         <td>{{ $product->name }}</td>
                         {{-- <td>{{ $product->price }}</td> --}}
                         <td>{{ number_format($product->price) }}</td>
-                        <td>{{ $product->productInventory ? $product->productInventory->stok : '-' }}</td>
+                        <td>{{$product->productInventory->stok}}</td>
                         <td>
                             <a href="{{ url('products/'. $product->id .'/edit') }}" class="btn btn-warning btn-sm">edit</a>
                             <a href="{{ url('products/' . $product->id) }}" class="delete" style="display:inline-block"

@@ -4,13 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Product;
 use App\Attribute;
+use App\ProductImage;
 use App\AttributeOption;
 use App\ProductInventory;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\ProductAttributeValue;
-use App\ProductImage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use League\CommonMark\Extension\Attributes\Node\Attributes;
 
@@ -196,43 +197,33 @@ class ProductController extends Controller
                 ->withInput();
         }
 
-        $data = [
-            // 'slug' => Str::slug($request->name)
-        ];
-
+        // Update data produk utama
         $product->fill($request->all());
-        // Ambil nama baru dari permintaan
-        $newName = $request->name;
-        // Hasilkan slug baru dari nama baru
-        $newSlug = Str::slug($newName);
-        // Perbarui nilai slug pada model produk
-        $product->slug = $newSlug;
+        $product->slug = Str::slug($request->name);
         $product->save();
 
-        // dd($request->variants);
+        // Update data stok produk utama
+        $product->productInventory()->updateOrCreate(
+            ['product_id' => $product->id],
+            ['stok' => $request->stok]
+        );
+
         if ($request->variants) {
-            foreach ($request->variants as $productParams) {
-                $product = Product::find($productParams['id']);
-                $product->fill($productParams);
-                $product->save();
+            foreach ($request->variants as $variantParams) {
+                $variantProduct = Product::find($variantParams['id']);
+                $variantProduct->fill($variantParams);
+                $variantProduct->save();
 
-                // Mengambil nilai stok dari input pengguna
-                $stok = $productParams['stok'];
+                $stok = $variantParams['stok'];
 
-                // Memperbarui atau membuat data di tabel product_inventories
-                $variantParams = [
-                    'product_id' => $product->id,
-                    'stok' => $stok, // Menggunakan nilai stok dari input pengguna
-                    'updated_at' => now(),
-                    'created_at' => now(),
-                ];
-                ProductInventory::updateOrCreate(['product_id' => $product->id], $variantParams);
+                $variantProduct->productInventory()->updateOrCreate(
+                    ['product_id' => $variantProduct->id],
+                    ['stok' => $stok]
+                );
             }
         }
 
-        $product->update($data);
-
-        return redirect('products');
+        return redirect('products')->with('success','Data berhasil diupdate');
     }
 
     /**
@@ -249,5 +240,75 @@ class ProductController extends Controller
         ProductImage::where('product_id',$id)->delete();
 
         return back()->with('success','Data berhasil dihapus');
+    }
+
+    // ===================== Image Product ===============================
+    public function images($id)
+    {
+        if (empty($id)){
+            return redirect('products/create');
+        }
+        
+        $product = Product::findOrFail($id);
+        $productID = $product->id;
+        $productImages = $product->productImages;
+        
+        return view('admin.products.images', compact('product', 'productID', 'productImages'));
+    }
+
+    public function add_image($id)
+    {   
+        if (empty($id)){
+            return redirect('products');
+        }
+        
+        $product = Product::findOrFail($id);
+        $productID = $product->id;
+        
+        return view('admin.products.images_form', compact('product', 'productID'));
+    }
+
+    public function upload_image(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'path' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $product = Product::findOrFail($id);
+
+        if ($request->hasFile('path')) {
+            $image = $request->file('path');
+            $name = Str::slug($product->name) . '_' . time();
+            $filename = $name . '.' . $image->getClientOriginalExtension();
+
+            $folder = '/uploads/images';
+            $filePath = $image->storeAs($folder, $filename, 'public');
+
+            $data = [
+                'product_id' => $product->id,
+                'path' => $filePath
+            ];
+
+            $productImage = ProductImage::create($data);
+            return redirect('products/' . $id . '/images')->with('success', 'Gambar berhasil ditambahkan');
+        }
+    }
+
+    public function remove_image($id)
+    {
+        $image = ProductImage::findOrFail($id);
+
+        // Menghapus gambar dari folder penyimpanan
+        Storage::disk('public')->delete($image->path);
+
+        $image->delete();
+
+        return redirect('products/'.$image->product->id.'/images')->with('success','Data berhasil dihapus');
     }
 }

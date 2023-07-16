@@ -25,8 +25,15 @@ Auth::routes();
 // add product
 Route::resource('/products', 'ProductController');
 
+// image product
+Route::get('products/{productID}/images','ProductController@images');
+Route::get('products/{productID}/add-image','ProductController@add_image');
+Route::post('products/images/{productID}','ProductController@upload_image');
+Route::delete('products/images/{imageID}','ProductController@remove_image');
+
 // add attributes
 Route::resource('/attributes', 'AttributeController');
+
 // add options
 Route::get('attributes/{attributeID}/add-option', 'AttributeController@add_option');
 Route::post('attributes/options/{attributeID}', 'AttributeController@store_option');
