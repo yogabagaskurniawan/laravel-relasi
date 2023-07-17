@@ -33,10 +33,14 @@ class Product extends Model
         return $this->BelongsTo('App\Product', 'parent_id');
     }
 
+    // hasMany perlu dilooping 
+    // hasOne tidak perlu
+    // belongsTo tidak perlu
+
     // relasi ke tabel product_images
     public function productImages()
     {
-        return $this->hasMany('App\productImage', 'product_id', 'id');
+        return $this->hasMany('App\ProductImage', 'product_id', 'id');
     }
 
     // relasi dari product ke productInventory 

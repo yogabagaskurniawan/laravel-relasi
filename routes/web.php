@@ -31,6 +31,9 @@ Route::get('products/{productID}/add-image','ProductController@add_image');
 Route::post('products/images/{productID}','ProductController@upload_image');
 Route::delete('products/images/{imageID}','ProductController@remove_image');
 
+// show user add product
+Route::get('/show', 'ProductController@show_user');
+
 // add attributes
 Route::resource('/attributes', 'AttributeController');
 

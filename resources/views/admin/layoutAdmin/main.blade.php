@@ -39,7 +39,7 @@
                     <a href="/attributes">Add Attributes</a>
                 </li>
                 <li>
-                    <a href="/testimonials">Show user add product</a>
+                    <a href="/show">Show user add product</a>
                 </li>
             </ul>
         </nav>

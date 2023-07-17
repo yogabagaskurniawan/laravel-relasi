@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use App\Product;
 use App\Attribute;
 use App\ProductImage;
@@ -310,5 +311,13 @@ class ProductController extends Controller
         $image->delete();
 
         return redirect('products/'.$image->product->id.'/images')->with('success','Data berhasil dihapus');
+    }
+    
+    // show user add product
+    public function show_user()
+    {
+        $dataUser = User::get();
+
+        return view('admin.show', compact('dataUser'));
     }
 }
