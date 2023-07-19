@@ -39,6 +39,9 @@
                     <a href="/attributes">Add Attributes</a>
                 </li>
                 <li>
+                    <a href="/categories">Add Categories</a>
+                </li>
+                <li>
                     <a href="/show">Show user add product</a>
                 </li>
             </ul>

@@ -7,15 +7,14 @@ use App\Product;
 use App\Attribute;
 use App\ProductImage;
 use App\AttributeOption;
+use App\Category;
 use App\ProductInventory;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\ProductAttributeValue;
-use Illuminate\Support\Facades\Auth;
+use App\ProductCategory;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use League\CommonMark\Extension\Attributes\Node\Attributes;
-
 class ProductController extends Controller
 {
     /**
@@ -39,8 +38,8 @@ class ProductController extends Controller
         $product = null;
         $productID = 0;
         $attribute = Attribute::all();
-        // $categoryIDs = [];
-        return view('admin.products.form',compact('product', 'productID', 'attribute'));
+        $categories = Category::all();
+        return view('admin.products.form',compact('product', 'productID', 'attribute', 'categories'));
     }
 
     /**
@@ -98,12 +97,14 @@ class ProductController extends Controller
             'sku' => $request->sku,
             'name' => $request->name,
             'user_id' => auth()->user()->id,
-            'slug' => Str::slug($request->name)
+            'slug' => Str::slug($request->name),
+            'selected_category' => $request->selected_category
         ];
         
         $validator = Validator::make($request->all(), [
             'sku' => 'required|unique:products',
             'name' => 'required|unique:products',
+            'selected_category' => 'required'
         ]);
     
         if ($validator->fails()) {
@@ -113,7 +114,7 @@ class ProductController extends Controller
         }
 
         $product = Product::create($data);
-        
+
         // mengambil semua combinasi dari multiple array
         $attributes = Attribute::get();
         $variantAttributes = [];
@@ -140,6 +141,13 @@ class ProductController extends Controller
                 // Setelah menciptakan produk variasi baru, perbarui slug-nya
                 $newProductVariant->slug = Str::slug($newProductVariant->name);
                 $newProductVariant->save();
+
+                // Category
+                $productCategory = new ProductCategory();
+                $productCategory->product_id = $newProductVariant->id;
+                $productCategory->category_id = $request->selected_category;
+                $productCategory->save();
+
                 $this->saveProductAttributeValues($newProductVariant, $variant);
             }
         }

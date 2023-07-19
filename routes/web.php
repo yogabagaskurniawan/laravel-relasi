@@ -37,6 +37,9 @@ Route::get('/show', 'ProductController@show_user');
 // add attributes
 Route::resource('/attributes', 'AttributeController');
 
+// add categories
+Route::resource('/categories', 'CategoryController');
+
 // add options
 Route::get('attributes/{attributeID}/add-option', 'AttributeController@add_option');
 Route::post('attributes/options/{attributeID}', 'AttributeController@store_option');

@@ -32,6 +32,7 @@
                     <h6>Berat = {{ $product->weight }} kg</h6>
                     <h6>Deskripsi = {{ $product->description }}</h6>
                     <h6>Stok = {{$product->productInventory->stok}}</h6>
+                    <h6 class="font-italic" style=" margin-top: 10px"><span style="text-decoration: underline;">Category</span> = {{ $product->productCategory->category->name }}</h6>
                     <h6 class="font-italic" style="text-decoration: underline; margin-top: 10px">Attribute Product</h6>
                     @foreach ($product->productAttributeValues as $attributeValue)
                       @if ($product->parent_id != NULL)

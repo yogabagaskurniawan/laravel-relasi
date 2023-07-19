@@ -54,4 +54,9 @@ class Product extends Model
     {
         return $this->hasMany('App\ProductAttributeValue', 'product_id', 'id');
     }
+
+    public function productCategory()
+    {
+        return $this->hasOne('App\ProductCategory', 'product_id', 'id');
+    }
 }

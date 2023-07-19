@@ -42,21 +42,29 @@
             @enderror
           </div>
           @if (empty($product))
+            <div class="form-group">
+              <label for="selected_category">Select Category</label>
+              <select class="form-control" name="selected_category" id="selected_category">
+                @foreach ($categories as $category)
+                  <option value="{{ $category->id }}">{{ $category->name }}</option>
+                @endforeach
+              </select>
+            </div> 
             <div class="configurable-attributes">
-              <p class="text-primary mt-4">Configurable Attributes</p>
+              <p class="text-primary mt-4">Attributes</p>
               <hr/>
               @foreach ($attribute as $attribute)
-                  <div class="form-group">
-                      <label for="{{ $attribute->code }}">{{ $attribute->name }}</label>
-                      @foreach ($attribute->attributeOptions as $option)
-                          <div class="form-check">
-                              <input class="form-check-input" type="checkbox" name="{{ $attribute->code }}[]" value="{{ $option->id }}" id="{{ $attribute->code }}_{{ $option->id }}">
-                              <label class="form-check-label" for="{{ $attribute->code }}_{{ $option->id }}">
-                                  {{ $option->name }}
-                              </label>
-                          </div>
-                      @endforeach
-                  </div>
+                <div class="form-group">
+                  <label for="{{ $attribute->code }}">{{ $attribute->name }}</label>
+                  @foreach ($attribute->attributeOptions as $option)
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" name="{{ $attribute->code }}[]" value="{{ $option->id }}" id="{{ $attribute->code }}_{{ $option->id }}">
+                      <label class="form-check-label" for="{{ $attribute->code }}_{{ $option->id }}">
+                        {{ $option->name }}
+                      </label>
+                    </div>
+                  @endforeach
+                </div>
               @endforeach
             </div> 
           @endif                       
