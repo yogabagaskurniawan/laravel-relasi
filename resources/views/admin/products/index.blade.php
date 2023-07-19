@@ -33,6 +33,7 @@
                         <td>{{$product->productInventory->stok}}</td>
                         <td>
                             <a href="{{ url('products/'. $product->id .'/edit') }}" class="btn btn-warning btn-sm">edit</a>
+                            @if (auth()->user()->name=='Admin')
                             <a href="{{ url('products/' . $product->id) }}" class="delete" style="display:inline-block"
                               onclick="event.preventDefault(); if (confirm('Are you sure you want to remove this item?')) { document.getElementById('delete-form-{{ $product->id }}').submit(); }">
                               <button type="button" class="btn btn-danger btn-sm">Remove</button>
@@ -41,6 +42,7 @@
                                 @method('DELETE')
                                 @csrf
                             </form>                                                   
+                            @endif
                           </td>
                     </tr>
                 @endforeach
@@ -55,7 +57,9 @@
           {{ $products->links() }}
         </div>
         <div class="card-footer text-right">
+          @if (auth()->user()->name=='Admin')
           <a href="{{ url('products/create') }}" class="btn btn-primary">Add New</a>
+          @endif
         </div>
       </div>
     </div>

@@ -23,26 +23,39 @@ Auth::routes();
 // Route::get('/home', 'HomeController@index')->name('home');
 
 // add product
-Route::resource('/products', 'ProductController');
+// Route::resource('/products', 'ProductController');
 
-// image product
-Route::get('products/{productID}/images','ProductController@images');
-Route::get('products/{productID}/add-image','ProductController@add_image');
-Route::post('products/images/{productID}','ProductController@upload_image');
-Route::delete('products/images/{imageID}','ProductController@remove_image');
+Route::group(['middleware' => ['auth', 'cekName:Admin']], function () {
+    // add product admin
+    Route::get('products/create', 'ProductController@create');
+    Route::post('products', 'ProductController@store');
+    Route::delete('products/{id}', 'ProductController@destroy');
+});
 
-// show user add product
-Route::get('/show', 'ProductController@show_user');
+Route::group(['middleware' => ['auth']], function () {
+    // add product
+    Route::get('products', 'ProductController@index');
+    Route::get('products/{id}/edit', 'ProductController@edit');
+    Route::put('products/{id}', 'ProductController@update');
 
-// add attributes
-Route::resource('/attributes', 'AttributeController');
-
-// add categories
-Route::resource('/categories', 'CategoryController');
-
-// add options
-Route::get('attributes/{attributeID}/add-option', 'AttributeController@add_option');
-Route::post('attributes/options/{attributeID}', 'AttributeController@store_option');
-Route::get('attributes/options/{optionID}/edit', 'AttributeController@edit_option');
-Route::put('attributes/options/{optionID}', 'AttributeController@update_option');
-Route::delete('attributes/options/{optionID}', 'AttributeController@remove_option');
+    // show user add product
+    Route::get('/show', 'ProductController@show_user');
+    
+    // add image product
+    Route::get('products/{productID}/images','ProductController@images');
+    Route::get('products/{productID}/add-image','ProductController@add_image');
+    Route::post('products/images/{productID}','ProductController@upload_image');
+    Route::delete('products/images/{imageID}','ProductController@remove_image');
+    
+    // add attributes
+    Route::resource('/attributes', 'AttributeController');
+    // add options attribute
+    Route::get('attributes/{attributeID}/add-option', 'AttributeController@add_option');
+    Route::post('attributes/options/{attributeID}', 'AttributeController@store_option');
+    Route::get('attributes/options/{optionID}/edit', 'AttributeController@edit_option');
+    Route::put('attributes/options/{optionID}', 'AttributeController@update_option');
+    Route::delete('attributes/options/{optionID}', 'AttributeController@remove_option');
+    
+    // add categories
+    Route::resource('/categories', 'CategoryController');
+});
